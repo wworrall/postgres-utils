@@ -1,0 +1,30 @@
+{
+  "name": "postgres-utils",
+  "version": "0.0.1",
+  "description": "A set of utility functions helpful when working with Postgres SQL",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx tsc",
+    "publish": "npx tsc && npm publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wworrall/postgres-utils.git"
+  },
+  "keywords": [
+    "Postgres",
+    "SQL",
+    "utilities"
+  ],
+  "author": "Will Worrall",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wworrall/postgres-utils/issues"
+  },
+  "homepage": "https://github.com/wworrall/postgres-utils#readme",
+  "devDependencies": {
+    "typescript": "^4.6.4"
+  }
+}

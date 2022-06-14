@@ -2,7 +2,9 @@
  * Convert a camelCase string to snake_case
  */
 function camelToSnakeCaseString(s: string) {
-  return s.replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`);
+  return s
+    .replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`)
+    .replace(/[0-9]+/g, (match) => `_${match}`);
 }
 
 /**
@@ -27,7 +29,7 @@ function camelToSnakeCaseKeys(obj: object) {
  * Convert a snake_case string to camelCase.
  */
 function snakeToCamelCaseString(s: string) {
-  return s.replace(/_[a-z]/g, (match) => match.charAt(1).toUpperCase());
+  return s.replace(/_[a-z0-9]/g, (match) => match.charAt(1).toUpperCase());
 }
 
 /**
@@ -53,23 +55,6 @@ type WhereParams = {
 };
 
 type GetParamsForWhereOutput = { whereSegment: string; whereParams: unknown[] };
-
-const COMPARISON_OPERATORS_MAP = {
-  eq: "=",
-  neq: "<>",
-  lt: "<",
-  lte: "<=",
-  gt: ">",
-  gte: ">=",
-  like: "LIKE",
-  notLike: "NOT LIKE",
-  ilike: "ILIKE",
-  notIlike: "NOT ILIKE",
-  in: "IN",
-  notIn: "NOT IN",
-  isNull: "IS NULL",
-  isNotNull: "IS NOT NULL",
-};
 
 /**
  * Convert an object defining where conditions to a SQL WHERE clause.
@@ -231,6 +216,51 @@ function arrayObjectToArray<T>(arrayObject: { [k: string]: T }): T[] {
     .map((numericKey) => numericKey.toString());
 
   return stringKeys.map((stringKey) => arrayObject[stringKey]);
+}
+
+type ColumnFilterObj = Partial<{
+  eq: string | number | boolean;
+  neq: string | number | boolean;
+  lt: number;
+  lte: number;
+  gt: number;
+  gte: number;
+  in: string[] | number[] | boolean[];
+  notIn: string[] | number[] | boolean[];
+  like: string;
+  notLike: string;
+  ilike: string;
+  notIlike: string;
+  isNull: boolean;
+  isNotNull: boolean;
+}>;
+
+const COMPARISON_OPERATORS_MAP: Record<keyof ColumnFilterObj, string> = {
+  eq: "=",
+  neq: "<>",
+  lt: "<",
+  lte: "<=",
+  gt: ">",
+  gte: ">=",
+  like: "LIKE",
+  notLike: "NOT LIKE",
+  ilike: "ILIKE",
+  notIlike: "NOT ILIKE",
+  in: "IN",
+  notIn: "NOT IN",
+  isNull: "IS NULL",
+  isNotNull: "IS NOT NULL",
+};
+
+type ColumnFilter = string | number | boolean | ColumnFilterObj;
+
+function generateFilterLine<K extends keyof ColumnFilterObj>(
+  columnName: string,
+  columnFilterKey: K,
+  columnFilter: ColumnFilterObj[K]
+) {
+  const comparisonOperator = COMPARISON_OPERATORS_MAP[columnFilterKey];
+  if (!comparisonOperator) throw new Error("Invalid comparison operator");
 }
 
 /**
